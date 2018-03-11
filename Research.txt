@@ -1,0 +1,1 @@
+https://forum.unity.com/threads/bloom-only-emissive-surfaces-in-forward-renderer.408645/
