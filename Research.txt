@@ -1,1 +1,10 @@
+https://glowcolossus.wordpress.com
+
+
+
+
+*Bloom*
 https://forum.unity.com/threads/bloom-only-emissive-surfaces-in-forward-renderer.408645/
+
+*Material Charts*
+https://docs.unity3d.com/Manual/StandardShaderMaterialCharts.html
