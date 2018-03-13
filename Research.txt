@@ -8,3 +8,5 @@ https://forum.unity.com/threads/bloom-only-emissive-surfaces-in-forward-renderer
 
 *Material Charts*
 https://docs.unity3d.com/Manual/StandardShaderMaterialCharts.html
+
+*Bow using Oculus OVRGrabber and OVRGrabbable*
