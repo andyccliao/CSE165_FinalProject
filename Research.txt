@@ -10,3 +10,9 @@ https://forum.unity.com/threads/bloom-only-emissive-surfaces-in-forward-renderer
 https://docs.unity3d.com/Manual/StandardShaderMaterialCharts.html
 
 *Bow using Oculus OVRGrabber and OVRGrabbable*
+
+*Start vs. Awake is various scenarios*
+https://answers.unity.com/questions/372752/does-finction-start-or-awake-run-when-the-object-o.html
+
+*Character Controllers have their own physics*
+https://docs.unity3d.com/ScriptReference/CharacterController.html

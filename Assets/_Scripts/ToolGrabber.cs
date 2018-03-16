@@ -9,7 +9,7 @@ public class ToolGrabber : OVRGrabber {
     protected override void GrabBegin()
     {
         base.GrabBegin();
-
+        if (m_grabbedObj == null) return;
         if (lastTool != null) {
             lastTool.enabled = false;
         }
@@ -19,5 +19,10 @@ public class ToolGrabber : OVRGrabber {
         if (lastTool != null) {
             lastTool.enabled = true;
         }
+    }
+
+    public OVRInput.Controller controller
+    {
+        get { return m_controller; }
     }
 }
