@@ -22,7 +22,9 @@ public class ToolMain : ToolScript {
     public float pushMagnitude = 10.0f;
     private float gravity = 9.8f;
 
-    private float triggerTimer = 0.0f;
+    private Vector3 touchPosition = Vector3.zero;
+    protected Dictionary<Collider, int> colliders = new Dictionary<Collider, int>();
+
 
     private void Awake()
     {
@@ -45,7 +47,7 @@ public class ToolMain : ToolScript {
             Debug.Log("GrabbedBy is null");
             return;
         }
-        OVRInput.Controller controller = tg.GrabbedBy.controller;
+        OVRInput.Controller controller = tg.GrabbedBy.Controller;
         Vector2 stickTilt = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, controller);
 
         if (stickTilt.y > tiltThreshold) {      //Tilt up
@@ -67,30 +69,44 @@ public class ToolMain : ToolScript {
             movement *= 0.99f;
             movement.y -= gravity * Time.deltaTime;
         }
-        if (triggerTimer > 0) triggerTimer -= Time.deltaTime;
+        //if (triggerTimer > 0) triggerTimer -= Time.deltaTime;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (triggerTimer <= 0.0f) {
-            if (other.CompareTag("Ground")) {
-                //Debug.Log(other.ToString());
-                //Debug.Log(rb.velocity);
-                //https://docs.unity3d.com/ScriptReference/Rigidbody.GetPointVelocity.html
-                Vector3 tipVelocity = rb.GetRelativePointVelocity(tip.transform.position);
-                Debug.Log(tipVelocity);
+        if (other.CompareTag("Ground")) {
+            if (colliders.Count == 0) {
+                if (tg.GrabbedBy == null) {
+                    Debug.Log("GrabbedBy is null");
+                    return;
+                }
+                Vector3 velocity, angularVelocity;
+                tg.GrabbedBy.GetVelocityAndAngularVelocity(out velocity, out angularVelocity);
 
-                movement = transform.TransformDirection(-tipVelocity * pushMagnitude);
-                //rb.AddTorque(transform.up * new Vector2(-rb.velocity.x, -rb.velocity.z).magnitude);
+                movement = velocity + angularVelocity;
+            }
+            int refCount = 0;
+            colliders.TryGetValue(other, out refCount);
+            colliders[other] = refCount + 1;
+        }
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        //if (other.CompareTag("Ground")) {}
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Ground")) {
+            int refCount = 0;
+            bool found = colliders.TryGetValue(other, out refCount);
+            if (!found) return;
 
-                triggerTimer = 0.2f;
+            if (refCount > 1) {
+                colliders[other] = refCount - 1;
+            }
+            else {
+                colliders.Remove(other);
             }
         }
     }
-
-    private void OnTriggerStay(Collider other)
-    {
-        
-    }
-
 }
