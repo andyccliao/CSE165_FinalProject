@@ -7,9 +7,17 @@ public class ToolMain : ToolScript {
     public float tiltThreshold = 0.7f;
 
     private ToolGrabbable tg;
-    private Rigidbody rb;
+    //private Rigidbody rb;
     public GameObject tip;
 
+    //Electricity
+    public Transform lightningScale;
+    public Vector3 offScale = new Vector3(1.0f, 0.001f, 1.0f);
+    public Vector3 onScale = Vector3.one;
+    public Light lightningLight;
+    public AudioSource lightningSound;
+
+    //Pole
     public float scaleSpeed = 2.0f;
     public Transform poleScale;
     public Vector3 shrunkenScale = new Vector3(0.1f, 0.001f, 0.1f);
@@ -17,21 +25,25 @@ public class ToolMain : ToolScript {
 
 
     public GameObject player;
-    CharacterController playerCC; 
-    private Vector3 movement;
+    public CharacterController playerCC;
     public float pushMagnitude = 10.0f;
-    private float gravity = 9.8f;
+    private Vector3 movement;
+    public float gravity = 9.8f;
 
     private Vector3 touchPosition = Vector3.zero;
+    private Vector3 lastPosition = Vector3.zero;
     protected Dictionary<Collider, int> colliders = new Dictionary<Collider, int>();
 
+    public AudioClip lowHit;
 
     private void Awake()
     {
         tg = GetComponent<ToolGrabbable>();
-        rb = GetComponent<Rigidbody>();
+        playerCC = GetComponent<CharacterController>();
         poleScale.localScale = shrunkenScale;
-        playerCC = player.GetComponent<CharacterController>();
+        lightningLight.enabled = false;
+        lightningScale.localScale = offScale;
+        lightningSound.enabled = false;
     }
     private void OnEnable () {
 
@@ -51,19 +63,20 @@ public class ToolMain : ToolScript {
         Vector2 stickTilt = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, controller);
 
         if (stickTilt.y > tiltThreshold) {      //Tilt up
-
+            LightningOn();
         }
         else if (stickTilt.y < -tiltThreshold) {//Tilt down
-            poleScale.localScale = Vector3.Lerp(poleScale.localScale, extendedScale, scaleSpeed * Time.deltaTime);
+            PoleOn();
         }
         else {
-            poleScale.localScale = Vector3.Lerp(poleScale.localScale, shrunkenScale, scaleSpeed * Time.deltaTime);
+            LightningOff();
+            PoleOff();
         }
 
         if (movement.magnitude > 0.01) {
             if (playerCC.isGrounded) {
                 movement *= 0.7f;
-                if(movement.y < 0) movement.y = 0;
+                if (movement.y < 0) movement.y = 0;
             }
             playerCC.Move(movement * Time.deltaTime);
             movement *= 0.99f;
@@ -72,27 +85,62 @@ public class ToolMain : ToolScript {
         //if (triggerTimer > 0) triggerTimer -= Time.deltaTime;
     }
 
+    private void PoleOff()
+    {
+        poleScale.localScale = Vector3.Lerp(poleScale.localScale, shrunkenScale, scaleSpeed * Time.deltaTime);
+    }
+
+    private void PoleOn()
+    {
+        poleScale.localScale = Vector3.Lerp(poleScale.localScale, extendedScale, scaleSpeed * Time.deltaTime);
+    }
+
+    private void LightningOff()
+    {
+        lightningLight.enabled = false;
+        lightningLight.intensity = 0f;
+        lightningScale.localScale = Vector3.Lerp(lightningScale.localScale, offScale, scaleSpeed * Time.deltaTime);
+
+        lightningSound.enabled = false;
+    }
+
+    private void LightningOn()
+    {
+        lightningScale.localScale = Vector3.Lerp(lightningScale.localScale, onScale, scaleSpeed * Time.deltaTime);
+
+        lightningLight.enabled = true;
+        lightningLight.intensity = 1 - (lightningScale.localScale - onScale).magnitude;
+
+        lightningSound.enabled = true;
+        lightningSound.Play();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Ground")) {
             if (colliders.Count == 0) {
-                if (tg.GrabbedBy == null) {
-                    Debug.Log("GrabbedBy is null");
-                    return;
-                }
-                Vector3 velocity, angularVelocity;
-                tg.GrabbedBy.GetVelocityAndAngularVelocity(out velocity, out angularVelocity);
-
-                movement = velocity + angularVelocity;
+                lastPosition = touchPosition = tip.transform.position;
             }
             int refCount = 0;
             colliders.TryGetValue(other, out refCount);
             colliders[other] = refCount + 1;
+
+            OVRHapticsClip hapticsClip = new OVRHapticsClip(lowHit);
+            if (tg.GrabbedBy != null && tg.GrabbedBy.Controller == OVRInput.Controller.RTouch) OVRHaptics.RightChannel.Preempt(hapticsClip);
+            if (tg.GrabbedBy != null && tg.GrabbedBy.Controller == OVRInput.Controller.LTouch) OVRHaptics.LeftChannel.Preempt(hapticsClip);
         }
+
+
+
     }
     private void OnTriggerStay(Collider other)
     {
-        //if (other.CompareTag("Ground")) {}
+        if (other.CompareTag("Ground")) {
+            //lastPosition = tip.transform.position;
+            playerRB.MovePosition(playerRB.position + (touchPosition - tip.transform.position)); ;
+            //movement.y = (touchPosition.y - tip.transform.position.y) * Time.deltaTime;
+            lastPosition = tip.transform.position;
+        }
     }
     private void OnTriggerExit(Collider other)
     {
@@ -106,6 +154,8 @@ public class ToolMain : ToolScript {
             }
             else {
                 colliders.Remove(other);
+
+                playerRB.velocity = (-(tip.transform.position - lastPosition) / Time.deltaTime);
             }
         }
     }

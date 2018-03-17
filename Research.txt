@@ -16,3 +16,9 @@ https://answers.unity.com/questions/372752/does-finction-start-or-awake-run-when
 
 *Character Controllers have their own physics*
 https://docs.unity3d.com/ScriptReference/CharacterController.html
+
+*Surface speed of rotating object using angular velocity*
+https://answers.unity.com/questions/35702/velocity-and-angular-velocity-of-an-object.html
+
+*Haptics Script*
+https://answers.unity.com/questions/1375915/how-to-implement-oculus-vr-haptic-feedback.html

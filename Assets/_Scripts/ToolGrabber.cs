@@ -5,11 +5,15 @@ using UnityEngine;
 public class ToolGrabber : OVRGrabber {
 
     protected ToolScript lastTool = null;
+    public MoveScript moveScript;
 
     protected override void GrabBegin()
     {
         base.GrabBegin();
-        if (m_grabbedObj == null) return;
+        if (m_grabbedObj == null) {
+
+            return;
+        }
         if (lastTool != null) {
             lastTool.enabled = false;
         }
