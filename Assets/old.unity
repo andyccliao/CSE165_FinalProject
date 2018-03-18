@@ -1325,12 +1325,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.1, y: 0.02, z: 0.17}
   m_Center: {x: 0, y: 0.01, z: 0}
---- !u!114 &1293893393 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 11437430, guid: 84c8b8609f9bb434eaf5248f17ff1293,
-    type: 2}
-  m_PrefabInternal: {fileID: 1709346537}
-  m_Script: {fileID: 11500000, guid: 00f3402a2ea5bff4880c0313515240cd, type: 3}
 --- !u!1 &1368866401
 GameObject:
   m_ObjectHideFlags: 0
@@ -2131,13 +2125,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   toolLocations:
-  - {fileID: 344100700}
-  - {fileID: 1010452978}
-  tools: []
-  beltOffsetFromHead: {fileID: 4683419806146182, guid: a27c8efb776380d47b25379edd5dd4e3,
-    type: 2}
-  centerEyeTransform: {fileID: 209701622}
-  ovrAvatar: {fileID: 1293893393}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  beltOffsetFromHead: {fileID: 0}
 --- !u!1 &1748277288
 GameObject:
   m_ObjectHideFlags: 0
@@ -2567,8 +2558,6 @@ MonoBehaviour:
     type: 2}
   m_grabPoints: []
   ts: {fileID: 1861768257}
-  tb: {fileID: 0}
-  positionOnBelt: {fileID: 0}
 --- !u!1 &1997042531 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 100012, guid: 973abd479c5385842a59578fb5aeab23, type: 3}

@@ -6,6 +6,7 @@ public class ToolGrabbable : OVRGrabbable {
 
     [SerializeField]
     protected ToolScript ts;
+    [SerializeField]
     protected ToolBelt tb;
 
     protected override void Start()
@@ -13,12 +14,19 @@ public class ToolGrabbable : OVRGrabbable {
         base.Start();
         Debug.AssertFormat(ts != null, "{0} needs a ToolScript.", this.ToString());
         ts.enabled = false;
+
+        //tb.
+    }
+
+    private void Update()
+    {
+        
     }
 
     override public void GrabBegin(OVRGrabber hand, Collider grabPoint)
     {
+        //tb.
         base.GrabBegin(hand, grabPoint);
-        
         ts.enabled = true;
     }
 

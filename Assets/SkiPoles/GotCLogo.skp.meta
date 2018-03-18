@@ -31,6 +31,7 @@ SketchUpImporter:
     2300000: //RootNode
     3300000: //RootNode
     4300000: Mesh Simple Template - Feet and Inches
+    6400000: //RootNode
   externalObjects:
   - first:
       type: UnityEngine:Material
