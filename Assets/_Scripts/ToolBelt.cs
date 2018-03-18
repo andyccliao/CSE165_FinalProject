@@ -13,7 +13,7 @@ public class ToolBelt : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        Debug.Assert(toolLocations.Length == tools.Length);
+        Debug.Assert(toolLocations.Length == tools.Length, "Number of tools and toolLocations do not match.");
 	}
 	
 	// Update is called once per frame
@@ -45,9 +45,10 @@ public class ToolBelt : MonoBehaviour {
     void UpdateAttachedToolPositions()
     {
         for (int i=0; i<tools.Length; i++) {
+            if (tools[i] == null) continue;
             if (!tools[i].isGrabbed) {
-                tools[i].grabbedRigidbody.MovePosition(toolLocations[i].position);
-                tools[i].grabbedRigidbody.MoveRotation(toolLocations[i].rotation);
+                tools[i].GetComponent<Rigidbody>().MovePosition(toolLocations[i].position);
+                tools[i].GetComponent<Rigidbody>().MoveRotation(toolLocations[i].rotation);
             }
         }
     }

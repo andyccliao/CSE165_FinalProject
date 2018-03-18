@@ -2133,7 +2133,9 @@ MonoBehaviour:
   toolLocations:
   - {fileID: 344100700}
   - {fileID: 1010452978}
-  tools: []
+  tools:
+  - {fileID: 0}
+  - {fileID: 1861768262}
   beltOffsetFromHead: {fileID: 4683419806146182, guid: a27c8efb776380d47b25379edd5dd4e3,
     type: 2}
   centerEyeTransform: {fileID: 209701622}
@@ -2429,7 +2431,7 @@ GameObject:
   - component: {fileID: 1861768262}
   - component: {fileID: 1861768257}
   m_Layer: 0
-  m_Name: SkiPole
+  m_Name: SkiPoleRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2568,7 +2570,6 @@ MonoBehaviour:
   m_grabPoints: []
   ts: {fileID: 1861768257}
   tb: {fileID: 0}
-  positionOnBelt: {fileID: 0}
 --- !u!1 &1997042531 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 100012, guid: 973abd479c5385842a59578fb5aeab23, type: 3}
