@@ -22,9 +22,8 @@ public class ToolMain : ToolScript {
     public Transform poleScale;
     public Vector3 shrunkenScale = new Vector3(0.1f, 0.001f, 0.1f);
     public Vector3 extendedScale = Vector3.one;
+    private bool poleExtended;
 
-
-    public GameObject player;
     public CharacterController playerCC;
     public float pushMagnitude = 10.0f;
     private Vector3 movement;
@@ -39,7 +38,6 @@ public class ToolMain : ToolScript {
     private void Awake()
     {
         tg = GetComponent<ToolGrabbable>();
-        playerCC = GetComponent<CharacterController>();
         poleScale.localScale = shrunkenScale;
         lightningLight.enabled = false;
         lightningScale.localScale = offScale;
@@ -73,13 +71,12 @@ public class ToolMain : ToolScript {
             PoleOff();
         }
 
-        if (movement.magnitude > 0.01) {
+        if (movement.magnitude > 0.1) {
             if (playerCC.isGrounded) {
-                movement *= 0.7f;
+                movement -= 3.0f * movement * Time.deltaTime;
                 if (movement.y < 0) movement.y = 0;
             }
             playerCC.Move(movement * Time.deltaTime);
-            movement *= 0.99f;
             movement.y -= gravity * Time.deltaTime;
         }
         //if (triggerTimer > 0) triggerTimer -= Time.deltaTime;
@@ -88,11 +85,13 @@ public class ToolMain : ToolScript {
     private void PoleOff()
     {
         poleScale.localScale = Vector3.Lerp(poleScale.localScale, shrunkenScale, scaleSpeed * Time.deltaTime);
+        poleExtended = false;
     }
 
     private void PoleOn()
     {
         poleScale.localScale = Vector3.Lerp(poleScale.localScale, extendedScale, scaleSpeed * Time.deltaTime);
+        poleExtended = true;
     }
 
     private void LightningOff()
@@ -102,6 +101,7 @@ public class ToolMain : ToolScript {
         lightningScale.localScale = Vector3.Lerp(lightningScale.localScale, offScale, scaleSpeed * Time.deltaTime);
 
         lightningSound.enabled = false;
+        lightningSound.pitch = 0.1f;
     }
 
     private void LightningOn()
@@ -109,16 +109,17 @@ public class ToolMain : ToolScript {
         lightningScale.localScale = Vector3.Lerp(lightningScale.localScale, onScale, scaleSpeed * Time.deltaTime);
 
         lightningLight.enabled = true;
-        lightningLight.intensity = 1 - (lightningScale.localScale - onScale).magnitude;
+        lightningLight.intensity *= 1 - (lightningScale.localScale - onScale).magnitude;
 
         lightningSound.enabled = true;
         lightningSound.Play();
+        if (lightningSound.pitch < 0.4) lightningSound.pitch += Time.deltaTime;
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Ground")) {
-            if (colliders.Count == 0) {
+            if (poleExtended && colliders.Count == 0) {
                 lastPosition = touchPosition = tip.transform.position;
             }
             int refCount = 0;
@@ -129,16 +130,18 @@ public class ToolMain : ToolScript {
             if (tg.GrabbedBy != null && tg.GrabbedBy.Controller == OVRInput.Controller.RTouch) OVRHaptics.RightChannel.Preempt(hapticsClip);
             if (tg.GrabbedBy != null && tg.GrabbedBy.Controller == OVRInput.Controller.LTouch) OVRHaptics.LeftChannel.Preempt(hapticsClip);
         }
-
-
-
     }
     private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Ground")) {
-            //lastPosition = tip.transform.position;
-            playerRB.MovePosition(playerRB.position + (touchPosition - tip.transform.position)); ;
-            //movement.y = (touchPosition.y - tip.transform.position.y) * Time.deltaTime;
+        if (poleExtended && other.CompareTag("Ground")) {
+            //if (lastPosition.Equals(touchPosition)) {
+            movement += (touchPosition - tip.transform.position);
+            movement /= 1.25f;
+            //movement.y *= 1.5f;
+            //}
+            //else {
+            //    movement += (touchPosition - tip.transform.position);
+            //}
             lastPosition = tip.transform.position;
         }
     }
@@ -155,7 +158,7 @@ public class ToolMain : ToolScript {
             else {
                 colliders.Remove(other);
 
-                playerRB.velocity = (-(tip.transform.position - lastPosition) / Time.deltaTime);
+                //playerRB.velocity = (-(tip.transform.position - lastPosition) / Time.deltaTime);
             }
         }
     }

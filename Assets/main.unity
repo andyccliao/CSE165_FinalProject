@@ -1448,6 +1448,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1445117893}
   - component: {fileID: 1445117892}
+  - component: {fileID: 1445117894}
   m_Layer: 0
   m_Name: Point light
   m_TagString: Untagged
@@ -1504,6 +1505,20 @@ Transform:
   m_Father: {fileID: 929050215}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1445117894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1445117891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7c289c7e763c624887d946dc91f7bee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  min: 0.25
+  max: 1
+  smoothness: 5
 --- !u!1 &1482239959
 GameObject:
   m_ObjectHideFlags: 0
@@ -2351,7 +2366,7 @@ MonoBehaviour:
   poleScale: {fileID: 1591078754}
   shrunkenScale: {x: 0.1, y: 0.001, z: 0.1}
   extendedScale: {x: 1, y: 1.2, z: 1}
-  player: {fileID: 220404423}
+  playerCC: {fileID: 220404427}
   pushMagnitude: 1
   gravity: 9.8
   lowHit: {fileID: 8300000, guid: ba69ac37d1e39a140a4a3283ff71f913, type: 3}
