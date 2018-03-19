@@ -11,13 +11,23 @@ public class ToolBelt : MonoBehaviour {
     public Transform centerEyeTransform;
     public OvrAvatar ovrAvatar;
 
-	// Use this for initialization
-	void Start () {
+    Quaternion prevRotation = Quaternion.identity;
+    public float returnSpeed = 5.0f;
+
+    // Use this for initialization
+    void Start()
+    {
         Debug.Assert(toolLocations.Length == tools.Length, "Number of tools and toolLocations do not match.");
-	}
-	
-	// Update is called once per frame
-	void Update () {
+        for (int i = 0; i < tools.Length; i++) {
+            if (tools[i] == null) continue;
+            if (!tools[i].isGrabbed) {
+                tools[i].GetComponent<Rigidbody>().MovePosition(toolLocations[i].position);
+            }
+        }
+    }
+    // Update is called once per frame
+    void Update()
+    {
         UpdateBeltPosition();
         UpdateAttachedToolPositions();
     }
@@ -28,16 +38,23 @@ public class ToolBelt : MonoBehaviour {
         Vector3 position = centerEyeTransform.position;
         position += beltOffsetFromHead.position;
 
-        //Rotate following head
+        //Rotate following head, but have some leeway
         Vector3 rotationy = Vector3.zero;
         rotationy.y = centerEyeTransform.rotation.eulerAngles.y;
-        Quaternion rotation = Quaternion.Euler(rotationy);
+
+        float lerpSpeed = 4;
+        float angle = Vector3.Angle(Vector3.down, centerEyeTransform.forward);
+        if (angle < 45) {
+            lerpSpeed *= angle / 90;
+        }
+        Quaternion rotation = Quaternion.Lerp(prevRotation, Quaternion.Euler(rotationy), lerpSpeed * Time.deltaTime);
+        prevRotation = rotation;
 
         //Adjust for head tilt
         Quaternion headTilt= Quaternion.FromToRotation(Vector3.up, centerEyeTransform.up);
         Vector3 tiltOffset = headTilt * Vector3.down;
-        position.x += tiltOffset.x;
-        position.z += tiltOffset.z;
+        position.x += 0.1f * tiltOffset.x;
+        position.z += 0.05f * tiltOffset.z;
 
         transform.SetPositionAndRotation(position, rotation);
     }
@@ -47,8 +64,16 @@ public class ToolBelt : MonoBehaviour {
         for (int i=0; i<tools.Length; i++) {
             if (tools[i] == null) continue;
             if (!tools[i].isGrabbed) {
-                tools[i].GetComponent<Rigidbody>().MovePosition(toolLocations[i].position);
-                tools[i].GetComponent<Rigidbody>().MoveRotation(toolLocations[i].rotation);
+                // if close, follow belt
+                if ((tools[i].transform.position - toolLocations[i].position).magnitude < 0.2f) {
+                    tools[i].GetComponent<Rigidbody>().MovePosition(toolLocations[i].position);
+                    tools[i].GetComponent<Rigidbody>().MoveRotation(toolLocations[i].rotation);
+                    tools[i].GetComponent<Rigidbody>().velocity = Vector3.zero;
+                }
+                else {
+                    tools[i].GetComponent<Rigidbody>().AddForce(20 * (toolLocations[i].position - tools[i].transform.position).normalized + 30 * (toolLocations[i].position - tools[i].transform.position));
+                    //tools[i].GetComponent<Rigidbody>().MovePosition(tools[i].transform.position + 0.5f * (toolLocations[i].position - tools[i].transform.position));
+                }
             }
         }
     }
