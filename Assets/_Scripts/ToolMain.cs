@@ -30,10 +30,11 @@ public class ToolMain : ToolScript {
     public float gravity = 9.8f;
 
     private Vector3 touchPosition = Vector3.zero;
-    private Vector3 lastPosition = Vector3.zero;
     protected Dictionary<Collider, int> colliders = new Dictionary<Collider, int>();
 
     public AudioClip lowHit;
+
+    public Material neonBlue;
 
     private void Awake()
     {
@@ -109,7 +110,7 @@ public class ToolMain : ToolScript {
         lightningScale.localScale = Vector3.Lerp(lightningScale.localScale, onScale, scaleSpeed * Time.deltaTime);
 
         lightningLight.enabled = true;
-        lightningLight.intensity *= 1 - (lightningScale.localScale - onScale).magnitude;
+        lightningLight.intensity *= 1f - (lightningScale.localScale - onScale).magnitude;
 
         lightningSound.enabled = true;
         lightningSound.Play();
@@ -120,7 +121,7 @@ public class ToolMain : ToolScript {
     {
         if (other.CompareTag("Ground")) {
             if (poleExtended && colliders.Count == 0) {
-                lastPosition = touchPosition = tip.transform.position;
+                touchPosition = tip.transform.position;
             }
             int refCount = 0;
             colliders.TryGetValue(other, out refCount);
@@ -142,7 +143,6 @@ public class ToolMain : ToolScript {
             //else {
             //    movement += (touchPosition - tip.transform.position);
             //}
-            lastPosition = tip.transform.position;
         }
     }
     private void OnTriggerExit(Collider other)

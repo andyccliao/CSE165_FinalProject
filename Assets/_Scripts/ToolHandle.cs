@@ -8,30 +8,39 @@ public class ToolHandle : ToolScript
     Color originalColor;
     public static float gripTime = 5.0f;
     ToolGrabbable tg;
+    AudioSource audio;
 
     public CharacterController playerCC;
+    Vector3 grabbedPosition = Vector3.zero;
 
 
     // Use this for initialization
-    void Start () {
+    void Awake () {
         material = GetComponent<Renderer>().material;
         originalColor = material.color;
         tg = GetComponent<ToolGrabbable>();
+        audio = GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        // Make new class for Handle, and new code for ToolGrabber
-        // Probably let ToolGrabber move the player
         // ** DEFAULT OVRGRABBER GRABBING MOVES THE OBJECT, I DON'T WANT THAT FOR HANDLES **
 
-        //if (tg.GrabbedBy) {
-        //    playerCC.Move(tg.GrabbedBy.transform.parent.TransformVector(OVRInput.GetLocalControllerVelocity(tg.GrabbedBy.Controller)));
-        //}
+        if (tg.GrabbedBy != null) {
+            //playerCC.Move(-tg.GrabbedBy.Velocity * Time.deltaTime);
+            playerCC.Move(tg.grabbedTransform.position - tg.grabbedBy.transform.position);
+        }
 	}
 
     private void OnEnable()
     {
+        tg.canMoveMe = false;
+        audio.Play();
         //material.color
+    }
+
+    private void OnDisable()
+    {
+        //tg.canMoveMe = true;
     }
 }

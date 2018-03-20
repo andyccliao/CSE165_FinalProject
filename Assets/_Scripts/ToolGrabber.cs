@@ -5,6 +5,7 @@ using UnityEngine;
 public class ToolGrabber : OVRGrabber {
 
     protected ToolScript lastTool = null;
+    //protected bool moveObject = true;
     //public MoveScript moveScript;
 
     protected override void GrabBegin()
@@ -24,6 +25,29 @@ public class ToolGrabber : OVRGrabber {
             lastTool.enabled = true;
         }
     }
+
+    //public bool MoveObject
+    //{
+    //    get { return moveObject; }
+    //    set { moveObject = value; }
+    //}
+    protected override void MoveGrabbedObject(Vector3 pos, Quaternion rot, bool forceTeleport = false)
+    {
+        if (m_grabbedObj == null) {
+            return;
+        }
+
+        // If do not move, do not call base
+        if (m_grabbedObj is ToolGrabbable) {
+            if (((ToolGrabbable)m_grabbedObj).canMoveMe) {
+                base.MoveGrabbedObject(pos, rot, forceTeleport);
+            }
+        }
+        else {
+            base.MoveGrabbedObject(pos, rot, forceTeleport);
+        }
+    }
+
 
     public OVRInput.Controller Controller
     {

@@ -9,13 +9,13 @@ public class ToolGrabbable : OVRGrabbable {
     protected ToolScript ts;
     [SerializeField]
     protected ToolBelt tb;
+    public bool canMoveMe = true;
 
     protected override void Start()
     {
         base.Start();
         Debug.AssertFormat(ts != null, "{0} needs a ToolScript.", this.ToString());
         ts.enabled = false;
-
         //tb.
     }
 
@@ -24,11 +24,13 @@ public class ToolGrabbable : OVRGrabbable {
         
     }
 
+
     override public void GrabBegin(OVRGrabber hand, Collider grabPoint)
     {
         //tb.
         base.GrabBegin(hand, grabPoint);
         ts.enabled = true;
+        
     }
 
     override public void GrabEnd(Vector3 linearVelocity, Vector3 angularVelocity)

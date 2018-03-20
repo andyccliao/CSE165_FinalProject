@@ -65,13 +65,13 @@ public class ToolBelt : MonoBehaviour {
             if (tools[i] == null) continue;
             if (!tools[i].isGrabbed) {
                 // if close, follow belt
-                if ((tools[i].transform.position - toolLocations[i].position).magnitude < 0.2f) {
+                if ((tools[i].transform.position - toolLocations[i].position).magnitude < 0.5f) {
                     tools[i].GetComponent<Rigidbody>().MovePosition(toolLocations[i].position);
                     tools[i].GetComponent<Rigidbody>().MoveRotation(toolLocations[i].rotation);
                     tools[i].GetComponent<Rigidbody>().velocity = Vector3.zero;
                 }
                 else {
-                    tools[i].GetComponent<Rigidbody>().AddForce(20 * (toolLocations[i].position - tools[i].transform.position).normalized + 30 * (toolLocations[i].position - tools[i].transform.position));
+                    tools[i].GetComponent<Rigidbody>().AddForce(25 * (toolLocations[i].position - tools[i].transform.position).normalized + 30 * (toolLocations[i].position - tools[i].transform.position));
                     //tools[i].GetComponent<Rigidbody>().MovePosition(tools[i].transform.position + 0.5f * (toolLocations[i].position - tools[i].transform.position));
                 }
             }
