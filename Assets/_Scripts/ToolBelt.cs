@@ -7,6 +7,8 @@ public class ToolBelt : MonoBehaviour {
 
     public Transform[] toolLocations;
     public ToolGrabbable[] tools;
+    protected Rigidbody[] toolRb;
+    protected bool[] toolIsKinematic;
     public Transform beltOffsetFromHead;
     public Transform centerEyeTransform;
     public OvrAvatar ovrAvatar;
@@ -18,15 +20,19 @@ public class ToolBelt : MonoBehaviour {
     void Start()
     {
         Debug.Assert(toolLocations.Length == tools.Length, "Number of tools and toolLocations do not match.");
+        toolRb = new Rigidbody[tools.Length];
+        toolIsKinematic = new bool[tools.Length];
         for (int i = 0; i < tools.Length; i++) {
             if (tools[i] == null) continue;
             if (!tools[i].isGrabbed) {
-                tools[i].GetComponent<Rigidbody>().MovePosition(toolLocations[i].position);
+                toolRb[i] = tools[i].GetComponent<Rigidbody>();
+                toolRb[i].position = (toolLocations[i].position);
+                toolIsKinematic[i] = toolRb[i].isKinematic;
             }
         }
     }
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         UpdateBeltPosition();
         UpdateAttachedToolPositions();
@@ -37,6 +43,7 @@ public class ToolBelt : MonoBehaviour {
         // Move Belt down
         Vector3 position = centerEyeTransform.position;
         position += beltOffsetFromHead.position;
+
 
         //Rotate following head, but have some leeway
         Vector3 rotationy = Vector3.zero;
@@ -66,12 +73,15 @@ public class ToolBelt : MonoBehaviour {
             if (!tools[i].isGrabbed) {
                 // if close, follow belt
                 if ((tools[i].transform.position - toolLocations[i].position).magnitude < 0.5f) {
-                    tools[i].GetComponent<Rigidbody>().MovePosition(toolLocations[i].position);
-                    tools[i].GetComponent<Rigidbody>().MoveRotation(toolLocations[i].rotation);
-                    tools[i].GetComponent<Rigidbody>().velocity = Vector3.zero;
+                    toolRb[i].isKinematic = true;
+                    toolRb[i].MovePosition(toolLocations[i].position);
+                    toolRb[i].MoveRotation(toolLocations[i].rotation);
+                    toolRb[i].velocity = Vector3.zero;
                 }
                 else {
-                    tools[i].GetComponent<Rigidbody>().AddForce(25 * (toolLocations[i].position - tools[i].transform.position).normalized + 30 * (toolLocations[i].position - tools[i].transform.position));
+                    toolRb[i].isKinematic = false;
+
+                    toolRb[i].AddForce(40 * (toolLocations[i].position - tools[i].transform.position).normalized + 60 * (toolLocations[i].position - tools[i].transform.position));
                     //tools[i].GetComponent<Rigidbody>().MovePosition(tools[i].transform.position + 0.5f * (toolLocations[i].position - tools[i].transform.position));
                 }
             }

@@ -15,15 +15,15 @@ public class ToolGrabber : OVRGrabber {
 
             return;
         }
-        if (lastTool != null) {
-            lastTool.enabled = false;
-        }
+        //if (lastTool != null) {
+        //    lastTool.enabled = false;
+        //}
 
-        lastTool = m_grabbedObj.GetComponent<ToolScript>();
+        //lastTool = m_grabbedObj.GetComponent<ToolScript>();
 
-        if (lastTool != null) {
-            lastTool.enabled = true;
-        }
+        //if (lastTool != null) {
+        //    lastTool.enabled = true;
+        //}
     }
 
     //public bool MoveObject

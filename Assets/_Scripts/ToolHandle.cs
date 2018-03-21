@@ -8,10 +8,14 @@ public class ToolHandle : ToolScript
     Color originalColor;
     public static float gripTime = 5.0f;
     ToolGrabbable tg;
-    AudioSource audio;
+    new AudioSource audio;
+    float gravityModifierCC;
 
     public CharacterController playerCC;
+    public OVRPlayerController playerOVR;
     Vector3 grabbedPosition = Vector3.zero;
+
+    static ToolHandle mainHandle;
 
 
     // Use this for initialization
@@ -20,27 +24,53 @@ public class ToolHandle : ToolScript
         originalColor = material.color;
         tg = GetComponent<ToolGrabbable>();
         audio = GetComponent<AudioSource>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        // ** DEFAULT OVRGRABBER GRABBING MOVES THE OBJECT, I DON'T WANT THAT FOR HANDLES **
+        gravityModifierCC = playerOVR.GravityModifier;
+        //Debug.Log(gravityModifierCC);
 
-        if (tg.GrabbedBy != null) {
-            //playerCC.Move(-tg.GrabbedBy.Velocity * Time.deltaTime);
-            playerCC.Move(tg.grabbedTransform.position - tg.grabbedBy.transform.position);
-        }
+        playerOVR.PreCharacterMove += MoveCharacterPosition;
 	}
+
+    private void MoveCharacterPosition()
+    {
+        if (isActiveAndEnabled) {
+            if (tg.isGrabbed && mainHandle == this) {
+                playerOVR.GravityModifier = 0;
+                playerOVR.ZeroFallSpeed();
+                playerCC.Move(tg.grabbedTransform.position - tg.grabbedBy.transform.position);
+            }
+        }
+    }
+
+    // Update is called once per frame
+    void Update () {
+
+        // ** DEFAULT OVRGRABBER GRABBING MOVES THE OBJECT, I DON'T WANT THAT FOR HANDLES **
+        //playerOVR.GravityModifier = 0;
+
+        //if (tg.GrabbedBy != null) {
+        //    //playerCC.Move(-tg.GrabbedBy.Velocity * Time.deltaTime);
+
+        //    playerCC.Move(tg.grabbedTransform.position - tg.grabbedBy.transform.position);
+        //    //Debug.Log("Target: " + tg.grabbedTransform.position);
+        //    //Debug.Log("ControllerPos: " + tg.grabbedBy.transform.position);
+        //}
+    }
 
     private void OnEnable()
     {
         tg.canMoveMe = false;
         audio.Play();
+
+        mainHandle = this;
         //material.color
     }
 
     private void OnDisable()
     {
+        if (mainHandle == this) {
+            playerOVR.GravityModifier = gravityModifierCC;
+            mainHandle = null;
+        }
         //tg.canMoveMe = true;
     }
 }

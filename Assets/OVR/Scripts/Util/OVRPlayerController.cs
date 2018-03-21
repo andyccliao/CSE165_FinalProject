@@ -264,11 +264,18 @@ public class OVRPlayerController : MonoBehaviour
 
 		moveDirection += MoveThrottle * SimulationRate * Time.deltaTime;
 
-		// Gravity
-		if (Controller.isGrounded && FallSpeed <= 0)
+        if (PreCharacterMove != null) {
+            PreCharacterMove();
+            Teleported = false;
+        }
+
+        // Gravity
+        if (Controller.isGrounded && FallSpeed <= 0)
 			FallSpeed = ((Physics.gravity.y * (GravityModifier * 0.002f)));
 		else
 			FallSpeed += ((Physics.gravity.y * (GravityModifier * 0.002f)) * SimulationRate * Time.deltaTime);
+
+        //Debug.Log("FallSpeed: " + FallSpeed);
 
 		moveDirection.y += FallSpeed * SimulationRate * Time.deltaTime;
 
@@ -280,11 +287,11 @@ public class OVRPlayerController : MonoBehaviour
 			moveDirection -= bumpUpOffset * Vector3.up;
 		}
 
-		if (PreCharacterMove != null)
-		{
-			PreCharacterMove();
-			Teleported = false;
-		}
+		//if (PreCharacterMove != null)
+		//{
+		//	PreCharacterMove();
+		//	Teleported = false;
+		//}
 
 		Vector3 predictedXZ = Vector3.Scale((Controller.transform.localPosition + moveDirection), new Vector3(1, 0, 1));
 
@@ -297,7 +304,10 @@ public class OVRPlayerController : MonoBehaviour
 	}
 
 
-
+    public void ZeroFallSpeed()
+    {
+        FallSpeed = 0;
+    }
 
 
 	public virtual void UpdateMovement()

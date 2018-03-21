@@ -79,7 +79,7 @@ GameObject:
   - component: {fileID: 65730507158581816}
   m_Layer: 0
   m_Name: GotCLogo
-  m_TagString: Untagged
+  m_TagString: Plug
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1025,9 +1025,11 @@ MonoBehaviour:
   shrunkenScale: {x: 0.1, y: 0.001, z: 0.1}
   extendedScale: {x: 1, y: 1.2, z: 1}
   playerCC: {fileID: 0}
+  playerOVR: {fileID: 0}
   pushMagnitude: 1
   gravity: 9.8
   lowHit: {fileID: 8300000, guid: ba69ac37d1e39a140a4a3283ff71f913, type: 3}
+  neonBlue: {fileID: 0}
 --- !u!114 &114290012751421652
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1079,6 +1081,7 @@ MonoBehaviour:
   m_grabPoints: []
   ts: {fileID: 114193461925936960}
   tb: {fileID: 0}
+  canMoveMe: 1
 --- !u!136 &136292779087862196
 CapsuleCollider:
   m_ObjectHideFlags: 1

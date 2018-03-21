@@ -11,6 +11,7 @@ public class ToolMain : ToolScript {
     public GameObject tip;
 
     //Electricity
+    public bool lightningActivated = false;
     public Transform lightningScale;
     public Vector3 offScale = new Vector3(1.0f, 0.001f, 1.0f);
     public Vector3 onScale = Vector3.one;
@@ -25,6 +26,7 @@ public class ToolMain : ToolScript {
     private bool poleExtended;
 
     public CharacterController playerCC;
+    public OVRPlayerController playerOVR;
     public float pushMagnitude = 10.0f;
     private Vector3 movement;
     public float gravity = 9.8f;
@@ -36,6 +38,8 @@ public class ToolMain : ToolScript {
 
     public Material neonBlue;
 
+    public bool wayfindingOn = false;
+
     private void Awake()
     {
         tg = GetComponent<ToolGrabbable>();
@@ -43,6 +47,8 @@ public class ToolMain : ToolScript {
         lightningLight.enabled = false;
         lightningScale.localScale = offScale;
         lightningSound.enabled = false;
+
+        playerOVR.PreCharacterMove += CalculateToolMovement;
     }
     private void OnEnable () {
 
@@ -51,6 +57,7 @@ public class ToolMain : ToolScript {
     private void OnDisable()
     {
         poleScale.localScale = shrunkenScale;
+        LightningOff();
     }
 
     void Update () {
@@ -71,16 +78,28 @@ public class ToolMain : ToolScript {
             LightningOff();
             PoleOff();
         }
-
-        if (movement.magnitude > 0.1) {
-            if (playerCC.isGrounded) {
-                movement -= 3.0f * movement * Time.deltaTime;
-                if (movement.y < 0) movement.y = 0;
-            }
-            playerCC.Move(movement * Time.deltaTime);
-            movement.y -= gravity * Time.deltaTime;
+        { 
+            //if (playerCC.isGrounded) {
+            //    movement -= 3.0f * movement * Time.deltaTime;
+            //    if (movement.y < 0) movement.y = 0;
+            //}
+            //playerCC.Move(movement * Time.deltaTime);
+            //movement.y -= gravity * Time.deltaTime;
         }
         //if (triggerTimer > 0) triggerTimer -= Time.deltaTime;
+    }
+
+    private void CalculateToolMovement()
+    {
+        //if (isActiveAndEnabled) {
+            if (movement.magnitude > 0.1) {
+                if (playerCC.isGrounded)
+                    movement -= 3.0f * movement * Time.deltaTime;
+                if (tg.isGrabbed) {
+                    playerCC.Move(movement * Time.deltaTime);
+                }
+            }
+        //}
     }
 
     private void PoleOff()
@@ -97,9 +116,11 @@ public class ToolMain : ToolScript {
 
     private void LightningOff()
     {
+        lightningActivated = false;
+        lightningScale.localScale = Vector3.Lerp(lightningScale.localScale, offScale, scaleSpeed * Time.deltaTime);
+
         lightningLight.enabled = false;
         lightningLight.intensity = 0f;
-        lightningScale.localScale = Vector3.Lerp(lightningScale.localScale, offScale, scaleSpeed * Time.deltaTime);
 
         lightningSound.enabled = false;
         lightningSound.pitch = 0.1f;
@@ -107,6 +128,7 @@ public class ToolMain : ToolScript {
 
     private void LightningOn()
     {
+        lightningActivated = true;
         lightningScale.localScale = Vector3.Lerp(lightningScale.localScale, onScale, scaleSpeed * Time.deltaTime);
 
         lightningLight.enabled = true;
@@ -130,6 +152,10 @@ public class ToolMain : ToolScript {
             OVRHapticsClip hapticsClip = new OVRHapticsClip(lowHit);
             if (tg.GrabbedBy != null && tg.GrabbedBy.Controller == OVRInput.Controller.RTouch) OVRHaptics.RightChannel.Preempt(hapticsClip);
             if (tg.GrabbedBy != null && tg.GrabbedBy.Controller == OVRInput.Controller.LTouch) OVRHaptics.LeftChannel.Preempt(hapticsClip);
+        }
+
+        if (other.CompareTag("Plug")) {
+            wayfindingOn = true;
         }
     }
     private void OnTriggerStay(Collider other)
@@ -160,6 +186,10 @@ public class ToolMain : ToolScript {
 
                 //playerRB.velocity = (-(tip.transform.position - lastPosition) / Time.deltaTime);
             }
+        }
+
+        if (other.CompareTag("Plug")) {
+            wayfindingOn = false;
         }
     }
 }
