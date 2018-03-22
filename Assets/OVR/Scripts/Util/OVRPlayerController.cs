@@ -279,8 +279,7 @@ public class OVRPlayerController : MonoBehaviour
 
 		moveDirection.y += FallSpeed * SimulationRate * Time.deltaTime;
 
-
-		if (Controller.isGrounded && MoveThrottle.y <= transform.lossyScale.y * 0.001f)
+        if (Controller.isGrounded && MoveThrottle.y <= transform.lossyScale.y * 0.001f)
 		{
 			// Offset correction for uneven ground
 			float bumpUpOffset = Mathf.Max(Controller.stepOffset, new Vector3(moveDirection.x, 0, moveDirection.z).magnitude);
@@ -504,6 +503,11 @@ public class OVRPlayerController : MonoBehaviour
 
 		return true;
 	}
+    public bool Jump(Vector3 linearJump)
+    {
+        MoveThrottle = linearJump;
+        return true;
+    }
 
 	/// <summary>
 	/// Stop this instance.

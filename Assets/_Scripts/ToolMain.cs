@@ -27,6 +27,7 @@ public class ToolMain : ToolScript {
 
     public CharacterController playerCC;
     public OVRPlayerController playerOVR;
+    public Transform centerEyeTransform;
     public float pushMagnitude = 10.0f;
     private Vector3 movement;
     public float gravity = 9.8f;
@@ -35,6 +36,7 @@ public class ToolMain : ToolScript {
     protected Dictionary<Collider, int> colliders = new Dictionary<Collider, int>();
 
     public AudioClip lowHit;
+    public AudioSource groundHit;
 
     public Material neonBlue;
 
@@ -94,9 +96,10 @@ public class ToolMain : ToolScript {
         //if (isActiveAndEnabled) {
             if (movement.magnitude > 0.1) {
                 if (playerCC.isGrounded)
-                    movement -= 3.0f * movement * Time.deltaTime;
+                    movement -= 0.5f * movement * Time.deltaTime;
                 if (tg.isGrabbed) {
                     playerCC.Move(movement * Time.deltaTime);
+                    
                 }
             }
         //}
@@ -142,6 +145,7 @@ public class ToolMain : ToolScript {
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Ground")) {
+            groundHit.Play();
             if (poleExtended && colliders.Count == 0) {
                 touchPosition = tip.transform.position;
             }

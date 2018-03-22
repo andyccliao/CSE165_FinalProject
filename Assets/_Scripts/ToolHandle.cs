@@ -73,4 +73,11 @@ public class ToolHandle : ToolScript
         }
         //tg.canMoveMe = true;
     }
+
+    public override void GrabEnd(Vector3 linearVelocity, Vector3 angularVelocity)
+    {
+        //if (mainHandle == this) {
+        //    playerOVR.Jump(-linearVelocity);
+        //}
+    }
 }

@@ -36,6 +36,7 @@ public class ToolGrabbable : OVRGrabbable {
     override public void GrabEnd(Vector3 linearVelocity, Vector3 angularVelocity)
     {
         base.GrabEnd(linearVelocity, angularVelocity);
+        ts.GrabEnd(linearVelocity, angularVelocity);
         ts.enabled = false;
     }
 

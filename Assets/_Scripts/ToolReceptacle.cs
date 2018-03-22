@@ -1,11 +1,10 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ToolReceptacle : MonoBehaviour {
 
-    public LCDDisplay lcd;
-    public Vector3 offset;
+    public event Action OnActivate;
 
     private void Start()
     {
@@ -26,7 +25,9 @@ public class ToolReceptacle : MonoBehaviour {
             Debug.Assert(toolMain != null, "Plug is not attached to a ToolMain!");
 
             if (toolMain.lightningActivated) {
-                lcd.ShowNumber();
+                if (OnActivate != null) {
+                    OnActivate();
+                }
             }
         }
     }

@@ -18,11 +18,11 @@ public class LCDDisplay : MonoBehaviour {
     public AudioSource sound;
     public AudioClip done;
 
+    public ToolReceptacle tr;
+
     // Use this for initialization
     void Start () {
-		if (correctNumber == -1) {
-            correctNumber = UnityEngine.Random.Range(0, 999999);
-        }
+        tr.OnActivate += ShowNumber;
 	}
 	
 	// Update is called once per frame
@@ -39,6 +39,11 @@ public class LCDDisplay : MonoBehaviour {
         }
 	}
 
+    public void SetCorrectNumber (int num)
+    {
+        correctNumber = num;
+    }
+
     private void DisplayCorrectNumber()
     {
         text.text = String.Format("{0:D6}", correctNumber);
@@ -49,6 +54,7 @@ public class LCDDisplay : MonoBehaviour {
     {
         giveCorrectNumber = true;
         sound.PlayOneShot(done);
+        text.color = Color.white;
     }
 
     private void DisplayRandomNumber()

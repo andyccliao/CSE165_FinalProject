@@ -20,13 +20,17 @@ public class ToolBelt : MonoBehaviour {
     void Start()
     {
         Debug.Assert(toolLocations.Length == tools.Length, "Number of tools and toolLocations do not match.");
+        UpdateBeltPosition();
+
         toolRb = new Rigidbody[tools.Length];
         toolIsKinematic = new bool[tools.Length];
+
         for (int i = 0; i < tools.Length; i++) {
             if (tools[i] == null) continue;
             if (!tools[i].isGrabbed) {
                 toolRb[i] = tools[i].GetComponent<Rigidbody>();
                 toolRb[i].position = (toolLocations[i].position);
+
                 toolIsKinematic[i] = toolRb[i].isKinematic;
             }
         }

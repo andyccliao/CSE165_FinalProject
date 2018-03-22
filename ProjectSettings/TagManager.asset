@@ -7,6 +7,9 @@ TagManager:
   - Ground
   - Grabber
   - Receptacle
+  - Plug
+  - Presser
+  - BButton
   layers:
   - Default
   - TransparentFX
@@ -16,8 +19,8 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
+  - Receptacle
+  - Presser
   - 
   - 
   - 
